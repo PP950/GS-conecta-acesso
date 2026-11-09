@@ -3,6 +3,7 @@ package br.com.fiap.conecta_acesso.service;
 import br.com.fiap.conecta_acesso.domain.relato.Relato;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
 import br.com.fiap.conecta_acesso.domain.relato.RelatoRepository;
+import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class RelatoService {
         Long estabelecimentoId = relato.getEstabelecimento().getId();
 
         if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-            throw new RuntimeException("Estabelecimento não encontrado");
+            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
         }
 
         return relatoRepository.save(relato);
@@ -59,7 +60,7 @@ public class RelatoService {
 
     public void excluir(Long id) {
         if (!relatoRepository.existsById(id)) {
-            throw new RuntimeException("Relato não encontrado");
+            throw new RecursoNaoEncontradoException("Relato não encontrado");
         }
 
         relatoRepository.deleteById(id);

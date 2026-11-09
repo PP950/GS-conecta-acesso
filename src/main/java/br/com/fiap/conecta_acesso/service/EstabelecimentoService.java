@@ -2,6 +2,7 @@ package br.com.fiap.conecta_acesso.service;
 
 import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
+import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +42,7 @@ public class EstabelecimentoService {
 
     public void excluir(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Estabelecimento não encontrado");
+            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
         }
 
         repository.deleteById(id);

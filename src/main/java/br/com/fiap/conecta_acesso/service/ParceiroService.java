@@ -2,6 +2,7 @@ package br.com.fiap.conecta_acesso.service;
 
 import br.com.fiap.conecta_acesso.domain.parceiro.Parceiro;
 import br.com.fiap.conecta_acesso.domain.parceiro.ParceiroRepository;
+import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ParceiroService {
 
     public void excluir(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Parceiro não encontrado");
+            throw new RecursoNaoEncontradoException("Parceiro não encontrado");
         }
 
         repository.deleteById(id);

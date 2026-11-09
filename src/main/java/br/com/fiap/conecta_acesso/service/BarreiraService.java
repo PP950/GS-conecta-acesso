@@ -3,6 +3,7 @@ package br.com.fiap.conecta_acesso.service;
 import br.com.fiap.conecta_acesso.domain.barreira.Barreira;
 import br.com.fiap.conecta_acesso.domain.barreira.BarreiraRepository;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
+import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class BarreiraService {
         Long estabelecimentoId = barreira.getEstabelecimento().getId();
 
         if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-            throw new RuntimeException("Estabelecimento não encontrado");
+            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
         }
 
         return barreiraRepository.save(barreira);
@@ -61,7 +62,7 @@ public class BarreiraService {
 
     public void excluir(Long id) {
         if (!barreiraRepository.existsById(id)) {
-            throw new RuntimeException("Barreira não encontrada");
+            throw new RecursoNaoEncontradoException("Barreira não encontrada");
         }
 
         barreiraRepository.deleteById(id);
