@@ -1,6 +1,8 @@
+
 package br.com.fiap.conecta_acesso.controller;
 
-import br.com.fiap.conecta_acesso.domain.parceiro.Parceiro;
+import br.com.fiap.conecta_acesso.domain.parceiro.ParceiroRequestDTO;
+import br.com.fiap.conecta_acesso.domain.parceiro.ParceiroResponseDTO;
 import br.com.fiap.conecta_acesso.service.ParceiroService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,26 +19,26 @@ public class ParceiroController {
     }
 
     @PostMapping
-    public Parceiro cadastrar(@RequestBody Parceiro parceiro) {
-        return service.cadastrar(parceiro);
+    public ParceiroResponseDTO cadastrar(
+            @RequestBody ParceiroRequestDTO dto) {
+        return service.cadastrar(dto);
     }
 
     @GetMapping
-    public List<Parceiro> listarTodos() {
+    public List<ParceiroResponseDTO> listarTodos() {
         return service.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public Parceiro buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Parceiro não encontrado"));
+    public ParceiroResponseDTO buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
-    public Parceiro atualizar(
+    public ParceiroResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody Parceiro parceiro) {
-        return service.atualizar(id, parceiro);
+            @RequestBody ParceiroRequestDTO dto) {
+        return service.atualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -3,10 +3,11 @@ package br.com.fiap.conecta_acesso.service;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
 import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRequestDTO;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EstabelecimentoService {
@@ -17,39 +18,81 @@ public class EstabelecimentoService {
         this.repository = repository;
     }
 
-    public Estabelecimento cadastrar(Estabelecimento estabelecimento) {
-        return repository.save(estabelecimento);
+    public EstabelecimentoResponseDTO cadastrar(EstabelecimentoRequestDTO dto) {
+        Estabelecimento estabelecimento = converterParaEntidade(dto);
+
+        Estabelecimento salvo = repository.save(estabelecimento);
+
+        return converterParaDTO(salvo);
     }
 
-    public Optional<Estabelecimento> buscarPorId(Long id) {
-        return repository.findById(id);
+    public EstabelecimentoResponseDTO buscarPorId(Long id) {
+        Estabelecimento estabelecimento = repository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
+
+        return converterParaDTO(estabelecimento);
     }
 
-    public Estabelecimento atualizar(Long id, Estabelecimento dados) {
-        return repository.findById(id)
-                .map(estabelecimento -> {
-                    estabelecimento.setNome(dados.getNome());
-                    estabelecimento.setCategoria(dados.getCategoria());
-                    estabelecimento.setEndereco(dados.getEndereco());
-                    estabelecimento.setBairro(dados.getBairro());
-                    estabelecimento.setCidade(dados.getCidade());
-                    estabelecimento.setContato(dados.getContato());
+    public EstabelecimentoResponseDTO atualizar(Long id, EstabelecimentoRequestDTO dto) {
+        Estabelecimento estabelecimento = repository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
 
-                    return repository.save(estabelecimento);
-                })
-                .orElseThrow(() -> new RuntimeException("Estabelecimento não encontrado"));
+        estabelecimento.setNome(dto.nome());
+        estabelecimento.setCategoria(dto.categoria());
+        estabelecimento.setEndereco(dto.endereco());
+        estabelecimento.setBairro(dto.bairro());
+        estabelecimento.setCidade(dto.cidade());
+        estabelecimento.setContato(dto.contato());
+
+        Estabelecimento atualizado = repository.save(estabelecimento);
+
+        return converterParaDTO(atualizado);
     }
 
     public void excluir(Long id) {
         if (!repository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
+            throw new RecursoNaoEncontradoException(
+                    "Estabelecimento não encontrado"
+            );
         }
 
         repository.deleteById(id);
     }
 
-    public List<Estabelecimento> listarTodos() {
-        return repository.findAll();
+    public List<EstabelecimentoResponseDTO> listarTodos() {
+        return repository.findAll()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
+    }
+
+    private Estabelecimento converterParaEntidade(EstabelecimentoRequestDTO dto) {
+        Estabelecimento estabelecimento = new Estabelecimento();
+
+        estabelecimento.setNome(dto.nome());
+        estabelecimento.setCategoria(dto.categoria());
+        estabelecimento.setEndereco(dto.endereco());
+        estabelecimento.setBairro(dto.bairro());
+        estabelecimento.setCidade(dto.cidade());
+        estabelecimento.setContato(dto.contato());
+
+        return estabelecimento;
+    }
+
+    private EstabelecimentoResponseDTO converterParaDTO(Estabelecimento estabelecimento) {
+        return new EstabelecimentoResponseDTO(
+                estabelecimento.getId(),
+                estabelecimento.getNome(),
+                estabelecimento.getCategoria(),
+                estabelecimento.getEndereco(),
+                estabelecimento.getBairro(),
+                estabelecimento.getCidade(),
+                estabelecimento.getContato()
+        );
     }
 
 }

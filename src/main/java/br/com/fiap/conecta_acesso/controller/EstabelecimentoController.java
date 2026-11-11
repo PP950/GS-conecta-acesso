@@ -3,6 +3,8 @@ package br.com.fiap.conecta_acesso.controller;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
 import br.com.fiap.conecta_acesso.service.EstabelecimentoService;
 import org.springframework.web.bind.annotation.*;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRequestDTO;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoResponseDTO;
 
 import java.util.List;
 
@@ -17,21 +19,21 @@ public class EstabelecimentoController {
     }
 
     @PostMapping
-    public Estabelecimento cadastrar(@RequestBody Estabelecimento estabelecimento) {
-        return service.cadastrar(estabelecimento);
+    public EstabelecimentoResponseDTO cadastrar(
+            @RequestBody EstabelecimentoRequestDTO dto) {
+        return service.cadastrar(dto);
     }
 
     @GetMapping("/{id}")
-    public Estabelecimento buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Estabelecimento não encontrado"));
+    public EstabelecimentoResponseDTO buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
-    public Estabelecimento atualizar(
+    public EstabelecimentoResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody Estabelecimento estabelecimento) {
-        return service.atualizar(id, estabelecimento);
+            @RequestBody EstabelecimentoRequestDTO dto) {
+        return service.atualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")
@@ -40,7 +42,6 @@ public class EstabelecimentoController {
     }
 
     @GetMapping
-    public List<Estabelecimento> listarTodos() {
-        return service.listarTodos();
-    }
+    public List<EstabelecimentoResponseDTO> listarTodos() {
+        return service.listarTodos();}
 }

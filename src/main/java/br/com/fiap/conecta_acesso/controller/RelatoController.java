@@ -1,6 +1,8 @@
+
 package br.com.fiap.conecta_acesso.controller;
 
-import br.com.fiap.conecta_acesso.domain.relato.Relato;
+import br.com.fiap.conecta_acesso.domain.relato.RelatoRequestDTO;
+import br.com.fiap.conecta_acesso.domain.relato.RelatoResponseDTO;
 import br.com.fiap.conecta_acesso.service.RelatoService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,26 +19,26 @@ public class RelatoController {
     }
 
     @PostMapping
-    public Relato cadastrar(@RequestBody Relato relato) {
-        return service.cadastrar(relato);
+    public RelatoResponseDTO cadastrar(
+            @RequestBody RelatoRequestDTO dto) {
+        return service.cadastrar(dto);
     }
 
     @GetMapping
-    public List<Relato> listarTodos() {
+    public List<RelatoResponseDTO> listarTodos() {
         return service.listarTodos();
     }
 
     @GetMapping("/{id}")
-    public Relato buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Relato não encontrado"));
+    public RelatoResponseDTO buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
-    public Relato atualizar(
+    public RelatoResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody Relato relato) {
-        return service.atualizar(id, relato);
+            @RequestBody RelatoRequestDTO dto) {
+        return service.atualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")

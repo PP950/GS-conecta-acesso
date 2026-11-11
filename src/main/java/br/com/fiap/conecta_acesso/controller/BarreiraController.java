@@ -1,6 +1,8 @@
+
 package br.com.fiap.conecta_acesso.controller;
 
-import br.com.fiap.conecta_acesso.domain.barreira.Barreira;
+import br.com.fiap.conecta_acesso.domain.barreira.BarreiraRequestDTO;
+import br.com.fiap.conecta_acesso.domain.barreira.BarreiraResponseDTO;
 import br.com.fiap.conecta_acesso.service.BarreiraService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,26 +19,26 @@ public class BarreiraController {
     }
 
     @PostMapping
-    public Barreira cadastrar(@RequestBody Barreira barreira) {
-        return service.cadastrar(barreira);
+    public BarreiraResponseDTO cadastrar(
+            @RequestBody BarreiraRequestDTO dto) {
+        return service.cadastrar(dto);
     }
 
     @GetMapping
-    public List<Barreira> listarTodas() {
+    public List<BarreiraResponseDTO> listarTodas() {
         return service.listarTodas();
     }
 
     @GetMapping("/{id}")
-    public Barreira buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .orElseThrow(() -> new RuntimeException("Barreira não encontrada"));
+    public BarreiraResponseDTO buscarPorId(@PathVariable Long id) {
+        return service.buscarPorId(id);
     }
 
     @PutMapping("/{id}")
-    public Barreira atualizar(
+    public BarreiraResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody Barreira barreira) {
-        return service.atualizar(id, barreira);
+            @RequestBody BarreiraRequestDTO dto) {
+        return service.atualizar(id, dto);
     }
 
     @DeleteMapping("/{id}")

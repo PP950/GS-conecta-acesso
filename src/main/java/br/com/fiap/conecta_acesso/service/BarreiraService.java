@@ -1,13 +1,16 @@
+
 package br.com.fiap.conecta_acesso.service;
 
 import br.com.fiap.conecta_acesso.domain.barreira.Barreira;
 import br.com.fiap.conecta_acesso.domain.barreira.BarreiraRepository;
+import br.com.fiap.conecta_acesso.domain.barreira.BarreiraRequestDTO;
+import br.com.fiap.conecta_acesso.domain.barreira.BarreiraResponseDTO;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
 import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BarreiraService {
@@ -22,49 +25,94 @@ public class BarreiraService {
         this.estabelecimentoRepository = estabelecimentoRepository;
     }
 
-    public Barreira cadastrar(Barreira barreira) {
-        Long estabelecimentoId = barreira.getEstabelecimento().getId();
+    public BarreiraResponseDTO cadastrar(BarreiraRequestDTO dto) {
+        Estabelecimento estabelecimento = estabelecimentoRepository
+                .findById(dto.estabelecimentoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
 
-        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
-        }
+        Barreira barreira = converterParaEntidade(dto, estabelecimento);
 
-        return barreiraRepository.save(barreira);
+        Barreira salva = barreiraRepository.save(barreira);
+
+        return converterParaDTO(salva);
     }
 
-    public List<Barreira> listarTodas() {
-        return barreiraRepository.findAll();
+    public List<BarreiraResponseDTO> listarTodas() {
+        return barreiraRepository.findAll()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
     }
 
-    public Optional<Barreira> buscarPorId(Long id) {
-        return barreiraRepository.findById(id);
+    public BarreiraResponseDTO buscarPorId(Long id) {
+        Barreira barreira = barreiraRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Barreira não encontrada"
+                ));
+
+        return converterParaDTO(barreira);
     }
 
-    public Barreira atualizar(Long id, Barreira dados) {
-        return barreiraRepository.findById(id)
-                .map(barreira -> {
-                    Long estabelecimentoId = dados.getEstabelecimento().getId();
+    public BarreiraResponseDTO atualizar(Long id, BarreiraRequestDTO dto) {
+        Barreira barreira = barreiraRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Barreira não encontrada"
+                ));
 
-                    if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-                        throw new RuntimeException("Estabelecimento não encontrado");
-                    }
+        Estabelecimento estabelecimento = estabelecimentoRepository
+                .findById(dto.estabelecimentoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
 
-                    barreira.setEstabelecimento(dados.getEstabelecimento());
-                    barreira.setTipo(dados.getTipo());
-                    barreira.setDescricao(dados.getDescricao());
-                    barreira.setSeveridade(dados.getSeveridade());
-                    barreira.setStatus(dados.getStatus());
+        barreira.setEstabelecimento(estabelecimento);
+        barreira.setTipo(dto.tipo());
+        barreira.setDescricao(dto.descricao());
+        barreira.setSeveridade(dto.severidade());
+        barreira.setStatus(dto.status());
 
-                    return barreiraRepository.save(barreira);
-                })
-                .orElseThrow(() -> new RuntimeException("Barreira não encontrada"));
+        Barreira atualizada = barreiraRepository.save(barreira);
+
+        return converterParaDTO(atualizada);
     }
 
     public void excluir(Long id) {
         if (!barreiraRepository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Barreira não encontrada");
+            throw new RecursoNaoEncontradoException(
+                    "Barreira não encontrada"
+            );
         }
 
         barreiraRepository.deleteById(id);
+    }
+
+    private Barreira converterParaEntidade(
+            BarreiraRequestDTO dto,
+            Estabelecimento estabelecimento) {
+
+        Barreira barreira = new Barreira();
+
+        barreira.setEstabelecimento(estabelecimento);
+        barreira.setTipo(dto.tipo());
+        barreira.setDescricao(dto.descricao());
+        barreira.setSeveridade(dto.severidade());
+        barreira.setStatus(dto.status());
+
+        return barreira;
+    }
+
+    private BarreiraResponseDTO converterParaDTO(Barreira barreira) {
+        return new BarreiraResponseDTO(
+                barreira.getId(),
+                barreira.getEstabelecimento().getId(),
+                barreira.getEstabelecimento().getNome(),
+                barreira.getTipo(),
+                barreira.getDescricao(),
+                barreira.getSeveridade(),
+                barreira.getStatus(),
+                barreira.getDataRegistro()
+        );
     }
 }

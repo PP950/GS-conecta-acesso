@@ -1,13 +1,16 @@
+
 package br.com.fiap.conecta_acesso.service;
 
 import br.com.fiap.conecta_acesso.domain.relato.Relato;
-import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
 import br.com.fiap.conecta_acesso.domain.relato.RelatoRepository;
+import br.com.fiap.conecta_acesso.domain.relato.RelatoRequestDTO;
+import br.com.fiap.conecta_acesso.domain.relato.RelatoResponseDTO;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
+import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRepository;
 import br.com.fiap.conecta_acesso.infra.exception.RecursoNaoEncontradoException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RelatoService {
@@ -22,47 +25,88 @@ public class RelatoService {
         this.estabelecimentoRepository = estabelecimentoRepository;
     }
 
-    public Relato cadastrar(Relato relato) {
-        Long estabelecimentoId = relato.getEstabelecimento().getId();
+    public RelatoResponseDTO cadastrar(RelatoRequestDTO dto) {
+        Estabelecimento estabelecimento = estabelecimentoRepository
+                .findById(dto.estabelecimentoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
 
-        if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-            throw new RecursoNaoEncontradoException("Estabelecimento não encontrado");
-        }
+        Relato relato = converterParaEntidade(dto, estabelecimento);
 
-        return relatoRepository.save(relato);
+        Relato salvo = relatoRepository.save(relato);
+
+        return converterParaDTO(salvo);
     }
 
-    public List<Relato> listarTodos() {
-        return relatoRepository.findAll();
+    public List<RelatoResponseDTO> listarTodos() {
+        return relatoRepository.findAll()
+                .stream()
+                .map(this::converterParaDTO)
+                .toList();
     }
 
-    public Optional<Relato> buscarPorId(Long id) {
-        return relatoRepository.findById(id);
+    public RelatoResponseDTO buscarPorId(Long id) {
+        Relato relato = relatoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Relato não encontrado"
+                ));
+
+        return converterParaDTO(relato);
     }
 
-    public Relato atualizar(Long id, Relato dados) {
-        return relatoRepository.findById(id)
-                .map(relato -> {
-                    Long estabelecimentoId = dados.getEstabelecimento().getId();
+    public RelatoResponseDTO atualizar(Long id, RelatoRequestDTO dto) {
+        Relato relato = relatoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Relato não encontrado"
+                ));
 
-                    if (!estabelecimentoRepository.existsById(estabelecimentoId)) {
-                        throw new RuntimeException("Estabelecimento não encontrado");
-                    }
+        Estabelecimento estabelecimento = estabelecimentoRepository
+                .findById(dto.estabelecimentoId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
+                        "Estabelecimento não encontrado"
+                ));
 
-                    relato.setEstabelecimento(dados.getEstabelecimento());
-                    relato.setDescricao(dados.getDescricao());
-                    relato.setStatus(dados.getStatus());
+        relato.setEstabelecimento(estabelecimento);
+        relato.setDescricao(dto.descricao());
+        relato.setStatus(dto.status());
 
-                    return relatoRepository.save(relato);
-                })
-                .orElseThrow(() -> new RuntimeException("Relato não encontrado"));
+        Relato atualizado = relatoRepository.save(relato);
+
+        return converterParaDTO(atualizado);
     }
 
     public void excluir(Long id) {
         if (!relatoRepository.existsById(id)) {
-            throw new RecursoNaoEncontradoException("Relato não encontrado");
+            throw new RecursoNaoEncontradoException(
+                    "Relato não encontrado"
+            );
         }
 
         relatoRepository.deleteById(id);
+    }
+
+    private Relato converterParaEntidade(
+            RelatoRequestDTO dto,
+            Estabelecimento estabelecimento) {
+
+        Relato relato = new Relato();
+
+        relato.setEstabelecimento(estabelecimento);
+        relato.setDescricao(dto.descricao());
+        relato.setStatus(dto.status());
+
+        return relato;
+    }
+
+    private RelatoResponseDTO converterParaDTO(Relato relato) {
+        return new RelatoResponseDTO(
+                relato.getId(),
+                relato.getEstabelecimento().getId(),
+                relato.getEstabelecimento().getNome(),
+                relato.getDescricao(),
+                relato.getStatus(),
+                relato.getDataRegistro()
+        );
     }
 }
