@@ -160,7 +160,7 @@ Antes de executar a aplicação, é necessário possuir:
 ### 1. Clonar o repositório
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone (https://github.com/PP950/GS-conecta-acesso.git)
 ```
 
 Entre na pasta do projeto:
