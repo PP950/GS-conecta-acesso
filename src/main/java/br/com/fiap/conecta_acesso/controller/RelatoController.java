@@ -1,9 +1,10 @@
-
 package br.com.fiap.conecta_acesso.controller;
 
 import br.com.fiap.conecta_acesso.domain.relato.RelatoRequestDTO;
 import br.com.fiap.conecta_acesso.domain.relato.RelatoResponseDTO;
 import br.com.fiap.conecta_acesso.service.RelatoService;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class RelatoController {
 
     @PostMapping
     public RelatoResponseDTO cadastrar(
-            @RequestBody RelatoRequestDTO dto) {
+            @Valid @RequestBody RelatoRequestDTO dto) {
         return service.cadastrar(dto);
     }
 
@@ -37,7 +38,7 @@ public class RelatoController {
     @PutMapping("/{id}")
     public RelatoResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody RelatoRequestDTO dto) {
+            @Valid @RequestBody RelatoRequestDTO dto) {
         return service.atualizar(id, dto);
     }
 

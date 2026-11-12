@@ -8,7 +8,7 @@ public record BarreiraResponseDTO(
         String estabelecimentoNome,
         TipoBarreira tipo,
         String descricao,
-        String severidade,
+        SeveridadeBarreira severidade,
         String status,
         LocalDateTime dataRegistro
 ) {

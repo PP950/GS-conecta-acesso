@@ -14,15 +14,20 @@ public class Parceiro {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EspecialidadeParceiro especialidade;
 
+    @Column(length = 1000)
     private String descricao;
 
+    @Column(nullable = false)
     private String telefone;
 
+    @Column(nullable = false)
     private String email;
 
     private String bairro;

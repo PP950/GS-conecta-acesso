@@ -1,0 +1,5 @@
+ALTER TABLE parceiro
+    MODIFY nome VARCHAR(255) NOT NULL,
+    MODIFY especialidade VARCHAR(255) NOT NULL,
+    MODIFY telefone VARCHAR(255) NOT NULL,
+    MODIFY email VARCHAR(255) NOT NULL;

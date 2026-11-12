@@ -1,0 +1,6 @@
+ALTER TABLE estabelecimento
+    MODIFY nome VARCHAR(255) NOT NULL,
+    MODIFY categoria VARCHAR(255) NOT NULL,
+    MODIFY endereco VARCHAR(255) NOT NULL,
+    MODIFY bairro VARCHAR(255) NOT NULL,
+    MODIFY cidade VARCHAR(255) NOT NULL;

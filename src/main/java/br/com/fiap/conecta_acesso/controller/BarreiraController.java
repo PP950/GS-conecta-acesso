@@ -1,9 +1,10 @@
-
 package br.com.fiap.conecta_acesso.controller;
 
 import br.com.fiap.conecta_acesso.domain.barreira.BarreiraRequestDTO;
 import br.com.fiap.conecta_acesso.domain.barreira.BarreiraResponseDTO;
 import br.com.fiap.conecta_acesso.service.BarreiraService;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class BarreiraController {
 
     @PostMapping
     public BarreiraResponseDTO cadastrar(
-            @RequestBody BarreiraRequestDTO dto) {
+            @Valid @RequestBody BarreiraRequestDTO dto) {
         return service.cadastrar(dto);
     }
 
@@ -37,7 +38,7 @@ public class BarreiraController {
     @PutMapping("/{id}")
     public BarreiraResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody BarreiraRequestDTO dto) {
+            @Valid @RequestBody BarreiraRequestDTO dto) {
         return service.atualizar(id, dto);
     }
 

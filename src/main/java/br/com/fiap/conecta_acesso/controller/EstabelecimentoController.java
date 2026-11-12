@@ -1,11 +1,11 @@
 package br.com.fiap.conecta_acesso.controller;
 
-import br.com.fiap.conecta_acesso.domain.estabelecimento.Estabelecimento;
 import br.com.fiap.conecta_acesso.service.EstabelecimentoService;
-import org.springframework.web.bind.annotation.*;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoRequestDTO;
 import br.com.fiap.conecta_acesso.domain.estabelecimento.EstabelecimentoResponseDTO;
 
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
@@ -20,7 +20,7 @@ public class EstabelecimentoController {
 
     @PostMapping
     public EstabelecimentoResponseDTO cadastrar(
-            @RequestBody EstabelecimentoRequestDTO dto) {
+            @Valid @RequestBody EstabelecimentoRequestDTO dto) {
         return service.cadastrar(dto);
     }
 
@@ -32,7 +32,7 @@ public class EstabelecimentoController {
     @PutMapping("/{id}")
     public EstabelecimentoResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody EstabelecimentoRequestDTO dto) {
+            @Valid @RequestBody EstabelecimentoRequestDTO dto) {
         return service.atualizar(id, dto);
     }
 
@@ -43,5 +43,6 @@ public class EstabelecimentoController {
 
     @GetMapping
     public List<EstabelecimentoResponseDTO> listarTodos() {
-        return service.listarTodos();}
+        return service.listarTodos();
+    }
 }

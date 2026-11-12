@@ -27,7 +27,8 @@ public class Barreira {
 
     private String descricao;
 
-    private String severidade;
+    @Enumerated(EnumType.STRING)
+    private SeveridadeBarreira severidade;
 
     private String status;
 

@@ -1,12 +1,23 @@
 package br.com.fiap.conecta_acesso.domain.estabelecimento;
 
-public record EstabelecimentoRequestDTO(
-        String nome,
-        String categoria,
-        String endereco,
-        String bairro,
-        String cidade,
-        String contato
-){
-}
+import jakarta.validation.constraints.NotBlank;
 
+public record EstabelecimentoRequestDTO(
+        @NotBlank
+        String nome,
+
+        @NotBlank
+        String categoria,
+
+        @NotBlank
+        String endereco,
+
+        @NotBlank
+        String bairro,
+
+        @NotBlank
+        String cidade,
+
+        String contato
+) {
+}
